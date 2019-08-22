@@ -1,8 +1,8 @@
-
 #include <stddef.h>
 #include <stdio.h>
 #include "Simulink2S32V_SlopeEst.h"
 #include "rtwtypes.h"
+#include "api.h"
 
 #define CAN1_TX_IDLIST_SIZE 1
 #define CAN1_RX_IDLIST_SIZE 2
@@ -52,12 +52,12 @@ void ternimateFunc () {
 
 int main() {
   init();
-  createCanMsgInMemByList(can1TxIdList, CAN1_TX_IDLIST_SIZE);
-  createCanMsgInMemByList(can1RxIdList, CAN1_RX_IDLIST_SIZE);
+  createCanMsgInMemByList(CAN1_TX_IDLIST_SIZE, can1TxIdList);
+  createCanMsgInMemByList(CAN1_RX_IDLIST_SIZE, can1RxIdList);
 
-  createAndJoinCanRxThread(1, can1RxIdList, CAN1_RX_IDLIST_SIZE);
-  createAndJoinCanTxThread(1, can1TxIdList, CAN1_TX_IDLIST_SIZE, 10000);
+  createAndJoinCanRxThread(1, CAN1_RX_IDLIST_SIZE, can1RxIdList);
+  createAndJoinCanTxThread(1, CAN1_TX_IDLIST_SIZE, 10000, can1TxIdList);
 
-  createAndJoinSimulinkThread(&oneStepFunc, &initializeFunc, &ternimateFunc, 10000);
+  createAndJoinSimulinkThread(10000, &oneStepFunc, &initializeFunc, &ternimateFunc);
   return 0;
 }
